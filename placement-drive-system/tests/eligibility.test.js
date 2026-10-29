@@ -1,0 +1,5 @@
+const test=require('node:test');const assert=require('node:assert/strict');const {checkEligibility}=require('../src/services/eligibility');
+const student={cgpa:8.2,department:'MCA',active_backlogs:0,graduation_year:2027};const drive={min_cgpa:7,max_active_backlogs:0,graduation_year:2027,status:'published',application_deadline:'2030-01-01T00:00:00Z'};
+test('student meeting all drive criteria is eligible',()=>assert.deepEqual(checkEligibility(student,drive,['MCA','CSE'],new Date('2026-01-01')), {eligible:true,reasons:[]}));
+test('explains each failed eligibility criterion',()=>{let r=checkEligibility({...student,cgpa:6.2,department:'ECE',active_backlogs:2,graduation_year:2026},drive,['MCA','CSE'],new Date('2026-01-01'));assert.equal(r.eligible,false);assert.equal(r.reasons.length,4)});
+test('closed and expired drives cannot be applied to',()=>{let r=checkEligibility(student,{...drive,status:'closed',application_deadline:'2020-01-01'},['MCA'],new Date('2026-01-01'));assert.equal(r.eligible,false);assert.equal(r.reasons.length,2)});
